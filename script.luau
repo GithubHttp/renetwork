@@ -4,13 +4,14 @@ local RunService = game:GetService("RunService")
 
 local localPlayer = Players.LocalPlayer
 local character = localPlayer.Character
+local rootPart = character.HumanoidRootPart
 
 settings().Physics.AllowSleep = false
 
 function accessoryNetless(target: Accessory)
     local handle = target.Handle
     local old = handle.CFrame
-    local new = character.HumanoidRootPart.CFrame
+    local new = rootPart.CFrame
     local magnitude = (new.Position - old.Position).Magnitude
 
     if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") then
@@ -22,9 +23,9 @@ function accessoryNetless(target: Accessory)
     handle.Velocity = (new.Position - old.Position) + Vector3.new(0, 50, 0)
 end
 function partNetless(target: BasePart)
-    if target ~= character.HumanoidRootPart then
+    if target ~= rootPart then
         local old = target.CFrame
-        local new = character.HumanoidRootPart.CFrame
+        local new = rootPart.CFrame
         local magnitude = (new.Position - old.Position).Magnitude
 
         if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") then
