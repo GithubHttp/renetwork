@@ -2,8 +2,6 @@
 --   Made by Proville6, please credit!
 --///////////////////////////////////////--
 
-
-local BadgeService = game:GetService("BadgeService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
