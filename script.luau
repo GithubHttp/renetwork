@@ -27,17 +27,17 @@ function accessoryNetless(target: Accessory)
 end
 function partNetless(target: BasePart)
     local rootPart = character.HumanoidRootPart
-    if target ~= rootPart then
-        local old = target.CFrame
-        local new = rootPart.CFrame
-        local magnitude = (new.Position - old.Position).Magnitude
+    local old = target.CFrame
+    local new = rootPart.CFrame
+    local magnitude = (new.Position - old.Position).Magnitude
 
-        if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") then
-            target.CFrame = new
-            task.wait(1 / 1000)
-            target.CFrame = old
-        end
-        
+    if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") then
+        target.CFrame = new
+        task.wait(1 / 1000)
+        target.CFrame = old
+    end
+
+    if target ~= rootPart then
         target.Velocity = (new.Position - old.Position) + Vector3.new(0, 50, 0)
     end
 end
