@@ -4,11 +4,11 @@ local RunService = game:GetService("RunService")
 
 local localPlayer = Players.LocalPlayer
 local character = localPlayer.Character
-local rootPart = character.HumanoidRootPart
 
 settings().Physics.AllowSleep = false
 
 function accessoryNetless(target: Accessory)
+    local rootPart = character.HumanoidRootPart
     local handle = target.Handle
     local old = handle.CFrame
     local new = rootPart.CFrame
@@ -23,6 +23,7 @@ function accessoryNetless(target: Accessory)
     handle.Velocity = (new.Position - old.Position) + Vector3.new(0, 50, 0)
 end
 function partNetless(target: BasePart)
+    local rootPart = character.HumanoidRootPart
     if target ~= rootPart then
         local old = target.CFrame
         local new = rootPart.CFrame
