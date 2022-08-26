@@ -37,7 +37,7 @@ function partNetless(target: BasePart)
         target.CFrame = old
     end
 
-    if target ~= rootPart or not rootPart:FindFirstChildOfClass("Motor6D") then
+    if target ~= rootPart then
         target.Velocity = (new.Position - old.Position) + Vector3.new(0, 50, 0)
     end
 end
