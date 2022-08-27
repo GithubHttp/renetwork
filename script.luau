@@ -17,11 +17,13 @@ function accessoryNetless(target: Accessory)
     local new = rootPart.CFrame
     local magnitude = (new.Position - old.Position).Magnitude
 
-    if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") then
-        handle.CFrame = new
-        task.wait(1 / 1000)
-        handle.CFrame = old
-    end
+    task.spawn(function()
+        if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") then
+            target.CFrame = new
+            task.wait(1 / 1000)
+            target.CFrame = old
+        end
+    end)
 
     handle.Velocity = (new.Position - old.Position) + Vector3.new(0, 50, 0)
 end
@@ -31,11 +33,13 @@ function partNetless(target: BasePart)
     local new = rootPart.CFrame
     local magnitude = (new.Position - old.Position).Magnitude
 
-    if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") then
-        target.CFrame = new
-        task.wait(1 / 1000)
-        target.CFrame = old
-    end
+    task.spawn(function()
+        if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") then
+            target.CFrame = new
+            task.wait(1 / 1000)
+            target.CFrame = old
+        end
+    end)
 
     if target ~= rootPart then
         target.Velocity = (new.Position - old.Position) + Vector3.new(0, 50, 0)
