@@ -30,9 +30,9 @@ function accessoryNetless(target: Accessory)
         handle.CFrame = old
     end
 
-    pcall(fire_touch_interest, character, handle, 0)
+    pcall(fire_touch_interest, character.PrimaryPart, handle, 0)
 
-    handle.Velocity = (new.Position - old.Position) + Vector3.new(0, 50, 0)
+    handle.Velocity = Vector3.new(1, 27.65, 1) * magnitude
 end
 function partNetless(target: BasePart)
     local rootPart = character:FindFirstChild("HumanoidRootPart")
@@ -46,10 +46,12 @@ function partNetless(target: BasePart)
         task.wait(1 / 1000)
         target.CFrame = old
      end
+
+     pcall(fire_touch_interest, character.PrimaryPart, target, 0)
     
 
     if target ~= rootPart then
-        target.Velocity = (old.Position - new.Position) + Vector3.new(0, 50, 0)
+        target.Velocity = Vector3.new(1, 27.65, 1) * magnitude
     end
 end
 
