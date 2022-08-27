@@ -11,6 +11,9 @@ local character = localPlayer.Character
 local is_network_owner = isnetworkowner or is_network_owner or function (...)
     return true
 end
+local fire_touch_interest = firetouchinterest or fire_touch_interest or function (...)
+    
+end
 
 settings().Physics.AllowSleep = false
 
@@ -28,6 +31,7 @@ function accessoryNetless(target: Accessory)
             handle.CFrame = old
         end
     end)
+    pcall(fire_touch_interest, character, handle)
 
     handle.Velocity = (new.Position - old.Position) + Vector3.new(0, 50, 0)
 end
