@@ -30,7 +30,7 @@ function accessoryNetless(target: Accessory)
         handle.CFrame = old
     end
 
-    pcall(fire_touch_interest, character, handle)
+    pcall(fire_touch_interest, character, handle, 0)
 
     handle.Velocity = (new.Position - old.Position) + Vector3.new(0, 50, 0)
 end
@@ -49,7 +49,7 @@ function partNetless(target: BasePart)
     
 
     if target ~= rootPart then
-        target.Velocity = (new.Position - old.Position) + Vector3.new(0, 50, 0)
+        target.Velocity = (old.Position - new.Position) + Vector3.new(0, 50, 0)
     end
 end
 
