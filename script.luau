@@ -8,6 +8,10 @@ local RunService = game:GetService("RunService")
 local localPlayer = Players.LocalPlayer
 local character = localPlayer.Character
 
+local is_network_owner = isnetworkowner or is_network_owner or function (...)
+    return false
+end
+
 settings().Physics.AllowSleep = false
 
 function accessoryNetless(target: Accessory)
@@ -18,7 +22,7 @@ function accessoryNetless(target: Accessory)
     local magnitude = (new.Position - old.Position).Magnitude
 
     task.spawn(function()
-        if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") then
+        if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") or not is_network_owner(target) then
             target.CFrame = new
             task.wait(1 / 1000)
             target.CFrame = old
@@ -34,7 +38,7 @@ function partNetless(target: BasePart)
     local magnitude = (new.Position - old.Position).Magnitude
 
     task.spawn(function()
-        if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") then
+        if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") or not is_network_owner(target) then
             target.CFrame = new
             task.wait(1 / 1000)
             target.CFrame = old
