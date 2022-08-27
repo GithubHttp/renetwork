@@ -24,13 +24,12 @@ function accessoryNetless(target: Accessory)
     local new = (rootPart or handle).CFrame
     local magnitude = (new.Position - old.Position).Magnitude
 
-    task.spawn(function()
-        if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") or not is_network_owner(handle) then
-            handle.CFrame = new
-            task.wait(1 / 1000)
-            handle.CFrame = old
-        end
-    end)
+    if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") or not is_network_owner(handle) then
+        handle.CFrame = new
+        task.wait(1 / 1000)
+        handle.CFrame = old
+    end
+
     pcall(fire_touch_interest, character, handle)
 
     handle.Velocity = (new.Position - old.Position) + Vector3.new(0, 50, 0)
@@ -41,13 +40,13 @@ function partNetless(target: BasePart)
     local new = (rootPart or target).CFrame
     local magnitude = (new.Position - old.Position).Magnitude
 
-    task.spawn(function()
-        if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") or not is_network_owner(target) then
-            target.CFrame = new
-            task.wait(1 / 1000)
-            target.CFrame = old
-        end
-    end)
+    
+    if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") or not is_network_owner(target) then
+        target.CFrame = new
+        task.wait(1 / 1000)
+        target.CFrame = old
+     end
+    
 
     if target ~= rootPart then
         target.Velocity = (new.Position - old.Position) + Vector3.new(0, 50, 0)
