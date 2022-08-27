@@ -9,7 +9,7 @@ local localPlayer = Players.LocalPlayer
 local character = localPlayer.Character
 
 local is_network_owner = isnetworkowner or is_network_owner or function (...)
-    return false
+    return true
 end
 
 settings().Physics.AllowSleep = false
