@@ -22,7 +22,7 @@ function accessoryNetless(target: Accessory)
     local magnitude = (new.Position - old.Position).Magnitude
 
     task.spawn(function()
-        if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") or not is_network_owner(target) then
+        if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") or not is_network_owner(handle) then
             target.CFrame = new
             task.wait(1 / 1000)
             target.CFrame = old
