@@ -8,36 +8,44 @@ local RunService = game:GetService("RunService")
 local localPlayer = Players.LocalPlayer
 local character = localPlayer.Character
 
+local is_network_owner = isnetworkowner or is_network_owner or function (...)
+    return true
+end
+
 settings().Physics.AllowSleep = false
 
 function accessoryNetless(target: Accessory)
-    local rootPart = character.HumanoidRootPart
+    local rootPart = character:FindFirstChild("HumanoidRootPart")
     local handle = target.Handle
     local old = handle.CFrame
-    local new = rootPart.CFrame
+    local new = (rootPart or handle).CFrame
     local magnitude = (new.Position - old.Position).Magnitude
 
-    if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") then
-        handle.CFrame = new
-        task.wait(1 / 1000)
-        handle.CFrame = old
-    end
+    task.spawn(function()
+        if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") or not is_network_owner(handle) then
+            handle.CFrame = new
+            task.wait(1 / 1000)
+            handle.CFrame = old
+        end
+    end)
 
     handle.Velocity = (new.Position - old.Position) + Vector3.new(0, 50, 0)
 end
 function partNetless(target: BasePart)
-    local rootPart = character.HumanoidRootPart
+    local rootPart = character:FindFirstChild("HumanoidRootPart")
     local old = target.CFrame
-    local new = rootPart.CFrame
+    local new = (rootPart or target).CFrame
     local magnitude = (new.Position - old.Position).Magnitude
 
-    if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") then
-        target.CFrame = new
-        task.wait(1 / 1000)
-        target.CFrame = old
-    end
+    task.spawn(function()
+        if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") or not is_network_owner(target) then
+            target.CFrame = new
+            task.wait(1 / 1000)
+            target.CFrame = old
+        end
+    end)
 
-    if target ~= rootPart or not rootPart:FindFirstChildOfClass("Motor6D") then
+    if target ~= rootPart then
         target.Velocity = (new.Position - old.Position) + Vector3.new(0, 50, 0)
     end
 end

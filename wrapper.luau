@@ -1,1 +1,1 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/GithubHttp/renetwork/dev/script.luau", true))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/GithubHttp/renetwork/stable/script.luau", true))()
