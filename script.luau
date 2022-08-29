@@ -41,8 +41,18 @@ function accessoryNetless(target: Accessory)
     local new = (rootPart or handle).CFrame
     local magnitude = (new.Position - old.Position).Magnitude
 
-    if magnitude > get_hidden_property(localPlayer, "SimulationRadius") or not is_network_owner(handle) then
-        sendNetworkOwnerChanged(handle, 1)
+    local simulationRadius = 0
+    local owner = true
+
+    pcall(function()
+        simulationRadius = get_hidden_property(localPlayer, "SimulationRadius")
+    end)
+    pcall(function()
+        owner = is_network_owner(handle)
+    end)
+
+    if magnitude > simulationRadius or not owner then
+        pcall(sendNetworkOwnerChanged, handle, 1)
         handle.CFrame = new
         task.wait(1 / 1000)
         handle.CFrame = old
@@ -58,9 +68,18 @@ function partNetless(target: BasePart)
     local new = (rootPart or target).CFrame
     local magnitude = (new.Position - old.Position).Magnitude
 
+    local simulationRadius = 0
+    local owner = true
+
+    pcall(function()
+        simulationRadius = get_hidden_property(localPlayer, "SimulationRadius")
+    end)
+    pcall(function()
+        owner = is_network_owner(target)
+    end)
     
-    if magnitude > get_hidden_property(localPlayer, "SimulationRadius") or not is_network_owner(target) then
-        sendNetworkOwnerChanged(target, 1)
+    if magnitude > simulationRadius or not owner then
+        pcall(sendNetworkOwnerChanged, target, 1)
         target.CFrame = new
         task.wait(1 / 1000)
         target.CFrame = old
