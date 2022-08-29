@@ -14,8 +14,22 @@ end
 local fire_touch_interest = firetouchinterest or fire_touch_interest or function (...)
     
 end
+local raknet = rnet or raknet or rak_net or nil
 
 settings().Physics.AllowSleep = false
+
+function sendNetworkOwnerChanged(obj, systemid)
+    if raknet and raknet.packetWriter then
+        local packetWriter = raknet.packetWriter;
+        packetWriter:start();
+        packetWriter:writeByte(0x83);
+        packetWriter:writeByte(0x07);
+        packetWriter:writeInstance(obj);
+        packetWriter:writeUInt16BE(0x818);
+        packetWriter:writeVarInt64(systemid);
+        raknet.send(packetWriter:finish());
+    end
+end
 
 function accessoryNetless(target: Accessory)
     local rootPart = character:FindFirstChild("HumanoidRootPart")
@@ -25,6 +39,7 @@ function accessoryNetless(target: Accessory)
     local magnitude = (new.Position - old.Position).Magnitude
 
     if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") or not is_network_owner(handle) then
+        sendNetworkOwnerChanged(handle, 1)
         handle.CFrame = new
         task.wait(1 / 1000)
         handle.CFrame = old
@@ -42,6 +57,7 @@ function partNetless(target: BasePart)
 
     
     if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") or not is_network_owner(target) then
+        sendNetworkOwnerChanged(target, 1)
         target.CFrame = new
         task.wait(1 / 1000)
         target.CFrame = old
