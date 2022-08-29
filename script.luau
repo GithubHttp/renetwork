@@ -12,7 +12,7 @@ local is_network_owner = isnetworkowner or is_network_owner or function (...)
     return true
 end
 local get_hidden_property = gethiddenproperty or get_hidden_property or function (...)
-    return 0
+    return math.huge
 end
 local fire_touch_interest = firetouchinterest or fire_touch_interest or function (...)
     
@@ -34,22 +34,15 @@ function sendNetworkOwnerChanged(obj, systemid)
     end
 end
 
-function accessoryNetless(target: Accessory)
+function accessoryNetless(target)
     local rootPart = character:FindFirstChild("HumanoidRootPart")
     local handle = target.Handle
     local old = handle.CFrame
     local new = (rootPart or handle).CFrame
     local magnitude = (new.Position - old.Position).Magnitude
 
-    local simulationRadius = 0
-    local owner = true
-
-    pcall(function()
-        simulationRadius = get_hidden_property(localPlayer, "SimulationRadius")
-    end)
-    pcall(function()
-        owner = is_network_owner(handle)
-    end)
+    local simulationRadius = get_hidden_property(localPlayer, "SimulationRadius")
+    local owner = is_network_owner(handle)
 
     if magnitude > simulationRadius or not owner then
         pcall(sendNetworkOwnerChanged, handle, 1)
@@ -62,21 +55,15 @@ function accessoryNetless(target: Accessory)
 
     handle.Velocity = Vector3.new(1, 27.65, 1) * magnitude
 end
-function partNetless(target: BasePart)
+function partNetless(target)
     local rootPart = character:FindFirstChild("HumanoidRootPart")
     local old = target.CFrame
     local new = (rootPart or target).CFrame
     local magnitude = (new.Position - old.Position).Magnitude
 
-    local simulationRadius = 0
-    local owner = true
-
-    pcall(function()
-        simulationRadius = get_hidden_property(localPlayer, "SimulationRadius")
-    end)
-    pcall(function()
-        owner = is_network_owner(target)
-    end)
+    
+    local simulationRadius = get_hidden_property(localPlayer, "SimulationRadius")
+    local owner = is_network_owner(target)
     
     if magnitude > simulationRadius or not owner then
         pcall(sendNetworkOwnerChanged, target, 1)
@@ -96,9 +83,9 @@ end
 local mainConnection = RunService.Heartbeat:Connect(function(deltaTime)
     for _, child in ipairs(character:GetChildren()) do
         if child:IsA("Accessory") then
-            task.spawn(accessoryNetless, child)
+            pcall(accessoryNetless, child)
         elseif child:IsA("BasePart") then
-            task.spawn(partNetless, child)
+            pcall(partNetless, child)
         end
     end
 end)
