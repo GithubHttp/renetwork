@@ -11,6 +11,9 @@ local character = localPlayer.Character
 local is_network_owner = isnetworkowner or is_network_owner or function (...)
     return true
 end
+local get_hidden_property = gethiddenproperty or get_hidden_property or function (...)
+    return 0
+end
 local fire_touch_interest = firetouchinterest or fire_touch_interest or function (...)
     
 end
@@ -38,7 +41,7 @@ function accessoryNetless(target: Accessory)
     local new = (rootPart or handle).CFrame
     local magnitude = (new.Position - old.Position).Magnitude
 
-    if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") or not is_network_owner(handle) then
+    if magnitude > get_hidden_property(localPlayer, "SimulationRadius") or not is_network_owner(handle) then
         sendNetworkOwnerChanged(handle, 1)
         handle.CFrame = new
         task.wait(1 / 1000)
@@ -56,7 +59,7 @@ function partNetless(target: BasePart)
     local magnitude = (new.Position - old.Position).Magnitude
 
     
-    if magnitude > gethiddenproperty(localPlayer, "SimulationRadius") or not is_network_owner(target) then
+    if magnitude > get_hidden_property(localPlayer, "SimulationRadius") or not is_network_owner(target) then
         sendNetworkOwnerChanged(target, 1)
         target.CFrame = new
         task.wait(1 / 1000)
