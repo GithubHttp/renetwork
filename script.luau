@@ -18,6 +18,7 @@ local fire_touch_interest = firetouchinterest or fire_touch_interest or function
     
 end
 local raknet = rnet or raknet or rak_net or nil
+local lastRakCall = os.clock()
 
 settings().Physics.AllowSleep = false
 
@@ -34,6 +35,16 @@ function sendNetworkOwnerChanged(obj, systemid)
     end
 end
 
+function setowner(target, new, old)
+    if (os.clock() - lastRakCall) > 1 / 750 then
+        task.spawn(sendNetworkOwnerChanged, target, 1)
+        lastRakCall = os.clock()
+    end
+    target.CFrame = new
+    task.wait(1 / 1000)
+    target.CFrame = old
+end
+
 function accessoryNetless(target)
     local rootPart = character:FindFirstChild("HumanoidRootPart")
     local handle = target.Handle
@@ -45,10 +56,7 @@ function accessoryNetless(target)
     local owner = is_network_owner(handle)
 
     if magnitude > simulationRadius or not owner then
-        pcall(sendNetworkOwnerChanged, handle, 1)
-        handle.CFrame = new
-        task.wait(1 / 1000)
-        handle.CFrame = old
+        task.spawn(setowner, handle, new, old)
     end
 
     pcall(fire_touch_interest, character.PrimaryPart, handle, 0)
@@ -66,10 +74,7 @@ function partNetless(target)
     local owner = is_network_owner(target)
     
     if magnitude > simulationRadius or not owner then
-        pcall(sendNetworkOwnerChanged, target, 1)
-        target.CFrame = new
-        task.wait(1 / 1000)
-        target.CFrame = old
+        task.spawn(setowner, target, new, old)
      end
 
      pcall(fire_touch_interest, character.PrimaryPart, target, 0)
