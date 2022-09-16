@@ -17,12 +17,12 @@ local is_network_owner = isnetworkowner or is_network_owner or function (object:
     assert(object ~= nil and object:IsA("BasePart"), "Attempt to check the network owner of a " .. typeof(object))
     return object.ReceiveAge == 0
 end
---[[ local get_hidden_property = gethiddenproperty or get_hidden_property or function (...)
+local get_hidden_property = gethiddenproperty or get_hidden_property or function (...)
     return math.huge
 end
 local fire_touch_interest = firetouchinterest or fire_touch_interest or function (...)
     
-end ]]
+end
 --local raknet = rnet or raknet or rak_net or nil
 --local lastRakCall = os.clock()
 
@@ -58,13 +58,16 @@ function spoof(target)
     local isOwner = is_network_owner(target)
 
     --local magnitude = (rootCFrame.Position - cframe.Position).Magnitude
-    if not isOwner then
-        target.CFrame = rootCFrame
-        while is_network_owner(target) do task.wait() end
-        target.CFrame = cframe
-    end
+    task.spawn(function()
+        if not isOwner then
+            target.CFrame = rootCFrame
+            while is_network_owner(target) do task.wait() end
+            target.CFrame = cframe
+        end
+    end)
+    pcall(fire_touch_interest, character.PrimaryPart, target, 0)
     if target ~= rootPart then
-        target.Velocity = Vector3.one * 27
+        target.Velocity = Vector3.new(0, 27, 0)
     end
 end
 
