@@ -1,6 +1,8 @@
---///////////////////////////////////////--
---   Made by Proville6, please credit!
---///////////////////////////////////////--
+--[[ 
+/////////// Renetwork ////////////
+ Renetwork is a new network spoof.
+//////////////////////////////////
+ ]]
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -8,21 +10,25 @@ local RunService = game:GetService("RunService")
 local localPlayer = Players.LocalPlayer
 local character = localPlayer.Character
 
-local is_network_owner = isnetworkowner or is_network_owner or function (...)
-    return true
+local is_network_owner = isnetworkowner or is_network_owner or function (object: Instance)
+    if object:IsA("Accessory") then
+        object = object:FindFirstDescendant("BasePart")
+    end
+    assert(object ~= nil and object:IsA("BasePart"), "Attempt to check the network owner of a " .. typeof(object))
+    return object.ReceiveAge == 0
 end
-local get_hidden_property = gethiddenproperty or get_hidden_property or function (...)
+--[[ local get_hidden_property = gethiddenproperty or get_hidden_property or function (...)
     return math.huge
 end
 local fire_touch_interest = firetouchinterest or fire_touch_interest or function (...)
     
-end
-local raknet = rnet or raknet or rak_net or nil
-local lastRakCall = os.clock()
+end ]]
+--local raknet = rnet or raknet or rak_net or nil
+--local lastRakCall = os.clock()
 
-settings().Physics.AllowSleep = false
+--settings().Physics.AllowSleep = false
 
-function sendNetworkOwnerChanged(obj, systemid)
+--[[ function sendNetworkOwnerChanged(obj, systemid)
     if raknet and raknet.packetWriter then
         local packetWriter = raknet.packetWriter;
         packetWriter:start();
@@ -43,54 +49,34 @@ function setowner(target, new, old)
     target.CFrame = new
     task.wait(1 / 1000)
     target.CFrame = old
-end
+end ]]
 
-function accessoryNetless(target)
+function spoof(target)
     local rootPart = character:FindFirstChild("HumanoidRootPart")
-    local handle = target.Handle
-    local old = handle.CFrame
-    local new = (rootPart or handle).CFrame
-    local magnitude = (new.Position - old.Position).Magnitude
+    local cframe = target.CFrame
+    local rootCFrame = rootPart.CFrame
+    local isOwner = is_network_owner(target)
 
-    local simulationRadius = get_hidden_property(localPlayer, "SimulationRadius")
-    local owner = is_network_owner(handle)
-
-    if magnitude > simulationRadius or not owner then
-        task.spawn(setowner, handle, new, old)
+    --local magnitude = (rootCFrame.Position - cframe.Position).Magnitude
+    if not isOwner then
+        target.CFrame = rootCFrame
+        while is_network_owner(target) do task.wait() end
+        target.CFrame = cframe
     end
-
-    pcall(fire_touch_interest, character.PrimaryPart, handle, 0)
-
-    handle.Velocity = Vector3.new(1, 27.65, 1) * magnitude
-end
-function partNetless(target)
-    local rootPart = character:FindFirstChild("HumanoidRootPart")
-    local old = target.CFrame
-    local new = (rootPart or target).CFrame
-    local magnitude = (new.Position - old.Position).Magnitude
-
-    
-    local simulationRadius = get_hidden_property(localPlayer, "SimulationRadius")
-    local owner = is_network_owner(target)
-    
-    if magnitude > simulationRadius or not owner then
-        task.spawn(setowner, target, new, old)
-     end
-
-     pcall(fire_touch_interest, character.PrimaryPart, target, 0)
-    
-
     if target ~= rootPart then
-        target.Velocity = Vector3.new(1, 27.65, 1) * magnitude
+        target.Velocity = Vector3.one * 27
     end
 end
 
 local mainConnection = RunService.Heartbeat:Connect(function(deltaTime)
     for _, child in ipairs(character:GetChildren()) do
+        local partToSpoof = child
         if child:IsA("Accessory") then
-            pcall(accessoryNetless, child)
-        elseif child:IsA("BasePart") then
-            pcall(partNetless, child)
+            partToSpoof = child:FindFirstChildOfClass("BasePart") or child
+        end
+
+        if partToSpoof:IsA("BasePart") then
+            task.spawn(spoof, partToSpoof)
         end
     end
 end)
