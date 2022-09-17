@@ -18,24 +18,36 @@ local is_network_owner = isnetworkowner or is_network_owner or function (object:
     return object.ReceiveAge == 0
 end
 local get_hidden_property = gethiddenproperty or get_hidden_property or function (...)
-    return math.huge
+    return nil
+end
+local get_simulation_radius = getsimulationradius or get_simulation_radius or function ()
+    return pcall(get_hidden_property, localPlayer, "SimulationRadius") or math.huge
 end
 local fire_touch_interest = firetouchinterest or fire_touch_interest or function (...)
     
+end
+
+function hasOwnership(target)
+    local magnitude = 
 end
 
 function spoof(target)
     local rootPart = character:FindFirstChild("HumanoidRootPart")
     local cframe = target.CFrame
     local rootCFrame = rootPart.CFrame
-    local isOwner = is_network_owner(target)
     local magnitude = (rootCFrame.Position - cframe.Position).Magnitude
+    local isOwner = is_network_owner(target)
     local simulationRadius = get_hidden_property(localPlayer, "SimulationRadius")
 
     task.spawn(function()
         if magnitude > simulationRadius or not isOwner then
             target.CFrame = rootCFrame
-            task.wait(1 / 1000)
+            while true do
+                if isOwner and simulationRadius < get_simulation_radius() then
+                    break
+                end
+                task.wait()
+            end
             target.CFrame = cframe
         end
     end)
@@ -61,3 +73,12 @@ end)
 localPlayer.CharacterRemoving:Once(function(character)
     mainConnection:Disconnect()
 end)
+
+settings().Physics.AllowSleep = false
+settings().Physics.ForceCSGv2 = false
+settings().Physics.DisableCSGv2 = true
+settings().Physics.UseCSGv2 = false
+settings().Rendering.EagerBulkExecution = true
+settings().Physics.ThrottleAdjustTime = math.huge
+settings().Physics.PhysicsEnvironmentalThrottle = Enum.EnviromentalPhysicsThrottle.Disabled
+localPlayer.ReplicationFocus = workspace
