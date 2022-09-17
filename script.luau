@@ -33,13 +33,13 @@ function spoof(target)
     local simulationRadius = get_hidden_property(localPlayer, "SimulationRadius")
 
     task.spawn(function()
-        if magnitude > simulationRadius - 1 or not isOwner then
+        if magnitude > simulationRadius or not isOwner then
             target.CFrame = rootCFrame
             task.wait(1 / 1000)
             target.CFrame = cframe
         end
     end)
-    pcall(fire_touch_interest, character.PrimaryPart, target, 0)
+    pcall(fire_touch_interest, character.PrimaryPart, target, 1)
     if target ~= rootPart then
         target.Velocity = (rootCFrame.Position - cframe.Position) + Vector3.new(0, 50, 0)
     end
@@ -49,7 +49,7 @@ local mainConnection = RunService.Heartbeat:Connect(function(deltaTime)
     for _, child in ipairs(character:GetChildren()) do
         local partToSpoof = child
         if child:IsA("Accessory") then
-            partToSpoof = child:FindFirstChildOfClass("BasePart") or child
+            partToSpoof = child:FindFirstChild("Handle")
         end
 
         if partToSpoof:IsA("BasePart") then
