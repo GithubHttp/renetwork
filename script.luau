@@ -56,8 +56,8 @@ function spoof(target)
     local cframe = target.CFrame
     local rootCFrame = rootPart.CFrame
     local isOwner = is_network_owner(target)
+    local magnitude = (rootCFrame.Position - cframe.Position).Magnitude
 
-    --local magnitude = (rootCFrame.Position - cframe.Position).Magnitude
     task.spawn(function()
         if not isOwner then
             target.CFrame = rootCFrame
@@ -67,7 +67,7 @@ function spoof(target)
     end)
     pcall(fire_touch_interest, character.PrimaryPart, target, 0)
     if target ~= rootPart then
-        target.Velocity = Vector3.new(0, 27, 0)
+        target.Velocity = magnitude * Vector3.one * 26.75
     end
 end
 
