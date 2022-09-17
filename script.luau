@@ -23,33 +23,6 @@ end
 local fire_touch_interest = firetouchinterest or fire_touch_interest or function (...)
     
 end
---local raknet = rnet or raknet or rak_net or nil
---local lastRakCall = os.clock()
-
---settings().Physics.AllowSleep = false
-
---[[ function sendNetworkOwnerChanged(obj, systemid)
-    if raknet and raknet.packetWriter then
-        local packetWriter = raknet.packetWriter;
-        packetWriter:start();
-        packetWriter:writeByte(0x83);
-        packetWriter:writeByte(0x07);
-        packetWriter:writeInstance(obj);
-        packetWriter:writeUInt16BE(0x818);
-        packetWriter:writeVarInt64(systemid);
-        raknet.send(packetWriter:finish());
-    end
-end
-
-function setowner(target, new, old)
-    if (os.clock() - lastRakCall) > 1 / 750 then
-        task.spawn(sendNetworkOwnerChanged, target, 1)
-        lastRakCall = os.clock()
-    end
-    target.CFrame = new
-    task.wait(1 / 1000)
-    target.CFrame = old
-end ]]
 
 function spoof(target)
     local rootPart = character:FindFirstChild("HumanoidRootPart")
@@ -57,17 +30,18 @@ function spoof(target)
     local rootCFrame = rootPart.CFrame
     local isOwner = is_network_owner(target)
     local magnitude = (rootCFrame.Position - cframe.Position).Magnitude
+    local simulationRadius = get_hidden_property(localPlayer, "SimulationRadius")
 
     task.spawn(function()
-        if not isOwner then
+        if magnitude > simulationRadius - 1 or not isOwner then
             target.CFrame = rootCFrame
-            while is_network_owner(target) do task.wait() end
+            task.wait(1 / 1000)
             target.CFrame = cframe
         end
     end)
     pcall(fire_touch_interest, character.PrimaryPart, target, 0)
     if target ~= rootPart then
-        target.Velocity = magnitude * Vector3.one * 26.75
+        target.Velocity = (rootCFrame.Position - cframe.Position) + Vector3.new(0, 50, 0)
     end
 end
 
