@@ -27,10 +27,6 @@ local fire_touch_interest = firetouchinterest or fire_touch_interest or function
     
 end
 
-function hasOwnership(target)
-    local magnitude = 
-end
-
 function spoof(target)
     local rootPart = character:FindFirstChild("HumanoidRootPart")
     local cframe = target.CFrame
