@@ -36,10 +36,10 @@ function spoof(target)
     local simulationRadius = get_hidden_property(localPlayer, "SimulationRadius")
 
     task.spawn(function()
-        if magnitude > simulationRadius or not isOwner then
+        if magnitude > simulationRadius - 5  or not isOwner then
             target.CFrame = rootCFrame
             while true do
-                if isOwner and simulationRadius < get_simulation_radius() then
+                if isOwner and simulationRadius < get_simulation_radius() - 5  then
                     break
                 end
                 task.wait()
@@ -47,9 +47,9 @@ function spoof(target)
             target.CFrame = cframe
         end
     end)
-    pcall(fire_touch_interest, character.PrimaryPart, target, 1)
+    pcall(fire_touch_interest, character.PrimaryPart, target, 0)
     if target ~= rootPart then
-        target.Velocity = (rootCFrame.Position - cframe.Position) + Vector3.new(0, 50, 0)
+        target.Velocity = (rootCFrame.Position - cframe.Position) + Vector3.new(0, 27, 0)
     end
 end
 
