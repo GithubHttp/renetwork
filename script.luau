@@ -49,7 +49,7 @@ function spoof(target)
     end)
     pcall(fire_touch_interest, character.PrimaryPart, target, 0)
     if target ~= rootPart then
-        target.Velocity = (rootCFrame.Position - cframe.Position) + Vector3.new(0, 27, 0)
+        target.Velocity = (rootCFrame.Position - cframe.Position) + Vector3.new(0, 30, 0)
     end
 end
 
