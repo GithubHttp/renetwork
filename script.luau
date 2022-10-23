@@ -18,10 +18,10 @@ local is_network_owner = isnetworkowner or is_network_owner or function (object:
     return object.ReceiveAge == 0
 end
 local get_hidden_property = gethiddenproperty or get_hidden_property or function (...)
-    return nil
+    return gethiddenproperty(...) or 0
 end
 local get_simulation_radius = getsimulationradius or get_simulation_radius or function ()
-    return pcall(get_hidden_property, localPlayer, "SimulationRadius") or math.huge
+    return get_hidden_property(localPlayer, "SimulationRadius") or math.huge
 end
 local fire_touch_interest = firetouchinterest or fire_touch_interest or function (...)
     
@@ -34,14 +34,21 @@ function spoof(target)
     local magnitude = (rootCFrame.Position - cframe.Position).Magnitude
     local isOwner = is_network_owner(target)
     local simulationRadius = get_simulation_radius()
+    local max = get_hidden_property(localPlayer, "MaxSimulationRadius")
 
     task.spawn(function()
-        if magnitude > (simulationRadius - 5) or not isOwner then
+        if (not isOwner) or (magnitude) > (max - 5)  then
             target.CFrame = rootCFrame
             while true do
-                if isOwner and magnitude < get_simulation_radius() - 5  then
+                magnitude = (rootCFrame.Position - cframe.Position).Magnitude
+                if isOwner or magnitude < (max - 5)  then
                     break
                 end
+                if target ~= rootPart then
+                    target.Velocity = Vector3.new(0, 30, 0)
+                end
+                max = get_hidden_property(localPlayer, "MaxSimulationRadius")
+                isOwner = is_network_owner(target)
                 task.wait()
             end
             target.CFrame = cframe
