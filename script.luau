@@ -36,7 +36,7 @@ function spoof(target)
     local simulationRadius = get_simulation_radius()
 
     task.spawn(function()
-        if (magnitude > simulationRadius - 5) or not isOwner then
+        if magnitude > (simulationRadius - 5) or not isOwner then
             target.CFrame = rootCFrame
             while true do
                 if isOwner and magnitude < get_simulation_radius() - 5  then
