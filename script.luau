@@ -33,13 +33,13 @@ function spoof(target)
     local rootCFrame = rootPart.CFrame
     local magnitude = (rootCFrame.Position - cframe.Position).Magnitude
     local isOwner = is_network_owner(target)
-    local simulationRadius = get_hidden_property(localPlayer, "SimulationRadius")
+    local simulationRadius = get_simulation_radius()
 
     task.spawn(function()
-        if magnitude > simulationRadius - 5  or not isOwner then
+        if (magnitude > simulationRadius - 5) or not isOwner then
             target.CFrame = rootCFrame
             while true do
-                if isOwner and simulationRadius < get_simulation_radius() - 5  then
+                if isOwner and magnitude < get_simulation_radius() - 5  then
                     break
                 end
                 task.wait()
